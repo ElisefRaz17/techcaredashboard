@@ -1,55 +1,76 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./components/Navbar";
-import {Box, Container, Grid} from "@mui/material";
+import {
+  Box,
+  Container,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import { getPatients } from "./api/getPatient";
 import PatientProfileCard from "./components/PatientProfileCard";
 import DiagnosisCard from "./components/DiagnosisSection/DiagnosisCard";
 import PatientsList from "./components/PatientsList";
 import DiagnosisHistory from "./components/DiagnosisSection/DiagnosisHistory";
 import DiagnosticList from "./components/DiagnosisSection/DiagnosticList";
+import LabResults from "./components/LabResults";
+import { ReactComponent as DownloadIcon } from "./assets/download.svg";
 
 function App() {
   const [patients, setPatients] = useState<any>([]);
-  const [allPatients,setAllPatients] = useState<any>([])
+  const [allPatients, setAllPatients] = useState<any>([]);
   useEffect(() => {
-    const controller = new AbortController()
+    const controller = new AbortController();
     const fetchData = async () => {
-        const data = await getPatients();
-        setAllPatients(data)
-        setPatients(data?.filter((patient:any)=>patient.name === "Jessica Taylor"));
-
+      const data = await getPatients();
+      setAllPatients(data);
+      setPatients(
+        data?.filter((patient: any) => patient.name === "Jessica Taylor"),
+      );
     };
     fetchData();
-    return ()=> controller.abort()
+    return () => controller.abort();
   }, []);
 
+  console.log("Data", patients);
+
+  const labResults = patients.map((patient: any) => patient.lab_results);
 
   return (
     <Container
-    maxWidth="xl"
-      
-      sx={{ display: "flex", background:"#F6F7F8", flexDirection: "column", gap: 4 }}
+      maxWidth="xl"
+      sx={{
+        display: "flex",
+        background: "#F6F7F8",
+        flexDirection: "column",
+        gap: 4,
+      }}
     >
       <NavBar />
       <Grid
         direction="row"
         container
         spacing={3.5}
-        sx={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        sx={{ alignItems: "flex-start" }}
       >
         <Grid size="auto">
-          <PatientsList patients={allPatients}/>
+          <PatientsList patients={allPatients} />
         </Grid>
         <Grid size="grow" container spacing={2}>
           {/* <Box></Box> */}
-          <DiagnosisHistory data={patients}/>
-          <DiagnosticList data={patients}/>
+          <DiagnosisHistory data={patients} />
+          <DiagnosticList data={patients} />
         </Grid>
-        <Grid size="auto">
-        <PatientProfileCard profile={patients} />
+        <Grid
+          size="auto"
+          sx={{ flexDirection: "column" }}
+          container
+          spacing={2}
+        >
+          <PatientProfileCard profile={patients} />
+          <LabResults labResults={labResults} />
         </Grid>
       </Grid>
     </Container>
