@@ -18,7 +18,9 @@ import DiagnosticList from "./components/DiagnosisSection/DiagnosticList";
 import LabResults from "./components/LabResults";
 import { ReactComponent as DownloadIcon } from "./assets/download.svg";
 
+
 function App() {
+
   const [patients, setPatients] = useState<any>([]);
   const [allPatients, setAllPatients] = useState<any>([]);
   useEffect(() => {

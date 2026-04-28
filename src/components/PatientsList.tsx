@@ -1,18 +1,19 @@
 import { Avatar, Card, List, ListItem, ListItemText, ListItemButton } from "@mui/material";
 import React from "react";
 import { Patient } from "../types/patient";
+import {usePatient} from "../context/PatientContext"
 interface PatientsProps {
   patients: any[];
 }
 const PatientsList: React.FC<PatientsProps> = ({ patients }) => {
-  let windowHeight = useWindowDimensions()
-  let cardHeight = windowHeight.height - 1
-
+  const {selectedPatient,setSelectedPatient} = usePatient()
+console.log("Selected Patient", selectedPatient)
   return (
     <Card sx={{ width: 367, height: `calc(100dvh - 72px - 32px)`, minHeight: '1000px', overflowY: 'auto' }}>
       <List>
         {patients.map((patient) => (
           <ListItemButton
+          onClick={()=>setSelectedPatient(patient)}
             key={patient.name}
             sx={{
               '&:hover': {
@@ -35,23 +36,4 @@ const PatientsList: React.FC<PatientsProps> = ({ patients }) => {
 };
 
 export default PatientsList;
-
-const useWindowDimensions = (): { height: number } => {
-  const [dimensions, setDimensions] = React.useState({
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
-  });
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setDimensions({
-        height: window.innerHeight,
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  return dimensions;
-};
 
