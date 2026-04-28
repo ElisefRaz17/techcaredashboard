@@ -14,8 +14,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
-import { useMemo, useState } from "react";
-import Dropdown from "./Dropdown";
+import { SetStateAction, useMemo, useState } from "react";
+import Dropdown from "../Dropdown";
 import { Box, SelectChangeEvent, Typography } from "@mui/material";
 import DiagnosisAverage from "./DiagnosisAverage";
 
@@ -31,58 +31,40 @@ ChartJS.register(
   Filler,
 );
 
-interface BloodPressureData {
+export type DiagnosisDataItem = {
   date: Date;
   label: string;
   systolic: number;
   diastolic: number;
-}
-
-type DiagnosisHistoryItem = {
-  month: string;
-  year: number | string;
-  blood_pressure: {
-    systolic: { value: number };
-    diastolic: { value: number };
-  };
+  respiratory_rate: number;
+  temperature: number;
+  heart_rate: number;
 };
 
-type Props = {
-  data?: Array<{
-    diagnosis_history?: DiagnosisHistoryItem[];
-  }>;
+type DiagnosisCardProps = {
+  data: DiagnosisDataItem[];
+  filterMonths: string | number | "all";
+  setFilterMonths: (value: string | number | "all") => void;
 };
 
-const DiagnosisCard = ({ data = [] }: Props) => {
-  const [filterMonths, setFilterMonths] = useState<number | "all">("all");
-  const transformData = (rawData: Props["data"]): BloodPressureData[] => {
-    return (rawData ?? [])
-      .flatMap((patient) => patient.diagnosis_history ?? [])
-      .map((item) => ({
-        date: new Date(`${item.month} 1, ${item.year}`),
-        label: `${item.month} ${item.year}`,
-        systolic: item.blood_pressure.systolic.value,
-        diastolic: item.blood_pressure.diastolic.value,
-      }))
-      .sort((a, b) => a.date.getTime() - b.date.getTime());
-  };
 
-  const processedData = transformData(data);
+const DiagnosisCard = ({data, filterMonths,setFilterMonths}:DiagnosisCardProps) => {
+  
   const filteredData = useMemo(() => {
-    if (filterMonths === "all") return processedData;
+    if (filterMonths === "all") return data;
 
     // 1. Get the latest date from the data as reference
     const latestDate = new Date(
-      Math.max(...processedData.map((d) => new Date(d.date).getTime())),
+      Math.max(...data.map((d) => new Date(d.date).getTime())),
     );
 
     // 2. Calculate the start date (3 or 6 months prior)
     const startDate = new Date(latestDate);
-    startDate.setMonth(startDate.getMonth() - filterMonths);
+    startDate.setMonth(startDate.getMonth() - Number(filterMonths));
 
     // 3. Filter data points
-    return processedData.filter((item) => new Date(item.date) >= startDate);
-  }, [filterMonths, processedData]);
+    return data.filter((item) => new Date(item.date) >= startDate);
+  }, [filterMonths, data]);
 
   const handleFilterChange = (event: SelectChangeEvent<string | number>) => {
     const rawValue = event.target.value;
@@ -96,10 +78,10 @@ const DiagnosisCard = ({ data = [] }: Props) => {
         filteredData.length
       : 0;
 
-    const systolicOverallAvg =
-    processedData.length > 0
-      ? processedData.reduce((sum, d) => sum + d.systolic, 0) /
-        processedData.length
+  const systolicOverallAvg =
+    data.length > 0
+      ? data.reduce((sum, d) => sum + d.systolic, 0) /
+        data.length
       : 0;
 
   const diastolicAvg =
@@ -108,10 +90,10 @@ const DiagnosisCard = ({ data = [] }: Props) => {
         filteredData.length
       : 0;
 
-        const diastolicOverallAvg =
-    processedData.length > 0
-      ? processedData.reduce((sum, d) => sum + d.diastolic, 0) /
-        processedData.length
+  const diastolicOverallAvg =
+    data.length > 0
+      ? data.reduce((sum, d) => sum + d.diastolic, 0) /
+        data.length
       : 0;
   const chartData: ChartData<"line", { x: Date; y: number }[]> = {
     datasets: [
@@ -163,56 +145,62 @@ const DiagnosisCard = ({ data = [] }: Props) => {
         padding: 16,
         borderRadius: 12,
         position: "relative",
-        minWidth: "417px",
         justifySelf: "flex-end",
         minHeight: 298,
-        display:"flex",
-        flexDirection:"row",
-        gap:8,
-        width:661
+        display: "flex",
+        flexDirection: "row",
+        gap: 8
       }}
     >
-      <Box sx={{display:"flex", flexDirection:"column", gap:2}}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <Typography
-          sx={{ fontFamily: "manrope", fontWeight: "bold", fontSize: 18 }}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
         >
-          Blood Pressure
-        </Typography>
-        <Dropdown
-          value={filterMonths}
-          onChange={handleFilterChange}
-          options={[
-            { value: 3, label: "3 Months" },
-            { value: 6, label: "6 Months" },
-            { value: "all", label: "All Time" },
-          ]}
-          label={""}
-          fullWidth={false}
-        />
-      </Box>
-      <Box sx={{ height: 187, width: 417 }}>
-        <Line options={options} data={chartData} />
-      </Box>
+          <Typography
+            sx={{ fontFamily: "manrope", fontWeight: "bold", fontSize: 18 }}
+          >
+            Blood Pressure
+          </Typography>
+          <Dropdown
+            value={filterMonths}
+            onChange={handleFilterChange}
+            options={[
+              { value: 3, label: "3 Months" },
+              { value: 6, label: "6 Months" },
+              { value: "all", label: "All Time" },
+            ]}
+            label={""}
+            fullWidth={false}
+          />
+        </Box>
+        <Box sx={{ height: 187, width: 417 }}>
+          <Line options={options} data={chartData} />
+        </Box>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         <DiagnosisAverage
           label={"Systolic"}
-          averageType={Math.round(systolicAvg) > Math.round(systolicOverallAvg) ? "high":"low"}
+          averageType={
+            Math.round(systolicAvg) > Math.round(systolicOverallAvg)
+              ? "high"
+              : "low"
+          }
           average={Math.round(systolicAvg)}
           color={"#E66FD2"}
         />
- 
-                <DiagnosisAverage
+
+        <DiagnosisAverage
           label={"Diastolic"}
-          averageType={Math.round(diastolicAvg) > Math.round(diastolicOverallAvg) ? "high":"low"}
+          averageType={
+            Math.round(diastolicAvg) > Math.round(diastolicOverallAvg)
+              ? "high"
+              : "low"
+          }
           average={Math.round(diastolicAvg)}
           color={"#8C6FE6"}
         />

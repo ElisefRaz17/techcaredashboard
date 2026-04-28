@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./components/Navbar";
-import {Container, Grid} from "@mui/material";
+import {Box, Container, Grid} from "@mui/material";
 import { getPatients } from "./api/getPatient";
 import PatientProfileCard from "./components/PatientProfileCard";
-import DiagnosisCard from "./components/DiagnosisCard";
+import DiagnosisCard from "./components/DiagnosisSection/DiagnosisCard";
 import PatientsList from "./components/PatientsList";
+import DiagnosisHistory from "./components/DiagnosisSection/DiagnosisHistory";
+import DiagnosticList from "./components/DiagnosisSection/DiagnosticList";
 
 function App() {
   const [patients, setPatients] = useState<any>([]);
@@ -21,6 +23,7 @@ function App() {
     return ()=> controller.abort()
   }, []);
 
+
   return (
     <Container
     maxWidth="xl"
@@ -31,17 +34,19 @@ function App() {
       <Grid
         direction="row"
         container
-        spacing={3}
+        spacing={3.5}
         sx={{
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Grid size="grow">
+        <Grid size="auto">
           <PatientsList patients={allPatients}/>
         </Grid>
-        <Grid size="grow">
-          <DiagnosisCard data={patients} />
+        <Grid size="grow" container spacing={2}>
+          {/* <Box></Box> */}
+          <DiagnosisHistory data={patients}/>
+          <DiagnosticList data={patients}/>
         </Grid>
         <Grid size="auto">
         <PatientProfileCard profile={patients} />

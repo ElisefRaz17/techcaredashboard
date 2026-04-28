@@ -1,6 +1,6 @@
 import { Badge, Box, Typography } from "@mui/material";
-import { ReactComponent as ArrowDown } from "../assets/ArrowDown.svg";
-import { ReactComponent as ArrowUp } from "../assets/ArrowUp.svg";
+import { ReactComponent as ArrowDown } from "../../assets/ArrowDown.svg";
+import { ReactComponent as ArrowUp } from "../../assets/ArrowUp.svg";
 import React from "react";
 interface AverageProps {
   label: string;
