@@ -1,25 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import NavBar from "./components/Navbar";
+import {Container, Grid} from "@mui/material";
+import { getPatients } from "./api/getPatient";
+import PatientProfileCard from "./components/PatientProfileCard";
+import DiagnosisCard from "./components/DiagnosisCard";
+import PatientsList from "./components/PatientsList";
 
 function App() {
+  const [patients, setPatients] = useState<any>([]);
+  const [allPatients,setAllPatients] = useState<any>([])
+  useEffect(() => {
+    const controller = new AbortController()
+    const fetchData = async () => {
+        const data = await getPatients();
+        setAllPatients(data)
+        setPatients(data?.filter((patient:any)=>patient.name === "Jessica Taylor"));
+
+    };
+    fetchData();
+    return ()=> controller.abort()
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container
+    maxWidth="xl"
+      
+      sx={{ display: "flex", background:"#F6F7F8", flexDirection: "column", gap: 4 }}
+    >
+      <NavBar />
+      <Grid
+        direction="row"
+        container
+        spacing={3}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Grid size="grow">
+          <PatientsList patients={allPatients}/>
+        </Grid>
+        <Grid size="grow">
+          <DiagnosisCard data={patients} />
+        </Grid>
+        <Grid size="auto">
+        <PatientProfileCard profile={patients} />
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
