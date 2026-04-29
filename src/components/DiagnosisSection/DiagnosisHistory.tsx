@@ -16,41 +16,13 @@ interface BloodPressureData {
   heart_rate: number;
 }
 
-type DiagnosisHistoryItem = {
-  month: string;
-  year: number | string;
-  heart_rate: {
-    value: number;
-    levels: string;
-  };
-  respiratory_rate: {
-    value: number;
-    levels: string;
-  };
-  temperature: {
-    value: number;
-    levels: string;
-  };
-  blood_pressure: {
-    systolic: { value: number };
-    diastolic: { value: number };
-  };
-};
 
-// type Props = {
-//   diagnosis_history?:DiagnosisHistoryItem[];
-//   // data?: Array<{
-//   //   diagnosis_history?: DiagnosisHistoryItem[];
-//   // }>;
-// };
 const DiagnosisHistory = ({ data }: any) => {
-  console.log("Diagnosis Data", data);
   const [filterMonths, setFilterMonths] = useState<string | number | "all">(
     "all",
   );
 
   const transformData = (rawData: any): BloodPressureData[] => {
-    // const transformData = (rawData:any): any[] => {
 
     return (rawData ?? []).diagnosis_history
       ?.map((item: any) => ({
@@ -153,7 +125,7 @@ const DiagnosisHistory = ({ data }: any) => {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        padding: 2,
+        padding: 2.5,
       }}
     >
       <Typography sx={{ fontWeight: "800", fontSize: 24 }}>
@@ -168,8 +140,6 @@ const DiagnosisHistory = ({ data }: any) => {
         <StatCard
           label={"Respiratory Rate"}
           imagePath={RespiratoryIcon}
-          // averageLabel={""}
-          // average={0}
           averageLabel={respiratoryRateLabel}
           average={Math.round(avgRespiratory)}
           averageType={"normal"}
@@ -181,8 +151,6 @@ const DiagnosisHistory = ({ data }: any) => {
           imagePath={TemperatureIcon}
           averageLabel={temperatureRateLabel}
           average={Math.ceil(avgTemperature)}
-          //           averageLabel={""}
-          // average={0}
           averageType={"normal"}
           measurementType={"temperature"}
           backgroundColor={"#FFE6E9"}
@@ -190,10 +158,8 @@ const DiagnosisHistory = ({ data }: any) => {
         <StatCard
           label={"Heart Rate"}
           imagePath={HeartIcon}
-          // averageLabel=""
           averageLabel={heartRateLabel}
           average={Math.round(avgHeartRate)}
-          // average={0}
           averageType={"normal"}
           measurementType="heart"
           backgroundColor={"#FFE6F1"}

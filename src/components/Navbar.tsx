@@ -5,19 +5,43 @@ import { ReactComponent as CreditCard } from "../assets/creditCard.svg";
 import { ReactComponent as Group } from "../assets/groupPeople.svg";
 import { ReactComponent as Home } from "../assets/home.svg";
 
-
-
-
-
-import { AppBar, Box, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Stack } from "@mui/material";
+import {
+  AppBar,
+  Link,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Stack,
+} from "@mui/material";
+import DoctorSettings from "./DoctorSettings";
 const NavLinks = ({ links }: any) => {
   return (
-    <List component={Stack} direction="row" spacing={1} sx={{p:0}}>
+    <List component={Stack} direction="row" spacing={1} sx={{ p: 0 }}>
       {links.map((link: any) => (
-        <ListItem disablePadding sx={{width:"auto"}}>
-          <Link underline="hover" sx={{display:'flex', alignItems:'center'}}>
-            <ListItemIcon sx={{justifyContent:"center"}}>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.name} sx={{fontSize:14, fontWeight:'bold', color:"#072635"}}/>
+        <ListItem key={link} disablePadding sx={{ width: "auto", "&:hover":{
+          cursor:"pointer"
+        } }}>
+          <Link
+            underline="none"
+            sx={{
+              display: "flex",
+              borderRadius: "41px",
+              height: "41px",
+              padding:1,
+              alignItems: "center",
+              "&:hover": {
+                background: "#01F0D0",
+              },
+            }}
+          >
+            <ListItemIcon sx={{ justifyContent: "center" }}>
+              {link.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={link.name}
+              sx={{ fontSize: 14, fontWeight: "bold", color: "#072635" }}
+            />
           </Link>
         </ListItem>
       ))}
@@ -28,19 +52,18 @@ const NavBar = () => {
   const links = [
     {
       name: "Overview",
-      icon: <Home/>,
+      icon: <Home />,
     },
     {
       name: "Patients",
-      icon: <Group/>,
+      icon: <Group />,
     },
     {
       name: "Schedule",
-      icon: <Calendar/>,
+      icon: <Calendar />,
     },
-    { name: "Message", icon: <ChatBubble/> },
-    { name: "Transactions", icon: <CreditCard/> },
-
+    { name: "Message", icon: <ChatBubble /> },
+    { name: "Transactions", icon: <CreditCard /> },
   ];
   return (
     <AppBar
@@ -48,17 +71,17 @@ const NavBar = () => {
         background: "#FFFFFF 0% 0% no-repeat padding-box",
         borderRadius: 70,
         height: 72,
-        display:'flex',
-        flexDirection:'row',
-        justifyContent:"space-between",
-        alignItems:"center",
-        padding:"32px",
-        position:"relative"
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "32px",
+        position: "relative",
       }}
     >
       <Logo />
       <NavLinks links={links} />
-      <> Menu Settings</>
+      <DoctorSettings/>
     </AppBar>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import {ReactComponent as DownloadIcon} from "../assets/download.svg"
-import { Card, Typography, List, ListItem, ListItemIcon, ListItemText, Stack } from "@mui/material";
+import { Card, Typography, List, ListItem, ListItemText, Stack } from "@mui/material";
 
 const LabResults = ({labResults}:any) => {
 
@@ -13,12 +13,13 @@ const LabResults = ({labResults}:any) => {
         alignItems: "flex-start",
         gap: 2,
         padding: 2,
+       minHeight:296
       }}
     >
       <Typography sx={{ fontWeight: "800", fontSize: 24 }}>
         Lab Results
       </Typography>
-      <List component={Stack} direction="column" spacing={1} sx={{minHeight:207,overflowY:"auto", width:"100%"}}>
+      <List component={Stack} direction="column" spacing={1} sx={{maxHeight:207,overflowY:"auto", width:"100%"}}>
       {labResults?.map((item:any, index:number)=>(
         <ListItem key={item || index} secondaryAction={<DownloadIcon/>}>
             <ListItemText primary={item}/>

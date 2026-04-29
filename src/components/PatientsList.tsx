@@ -1,3 +1,5 @@
+import React, { useMemo, useState } from "react";
+import { usePatient } from "../context/PatientContext";
 import {
   Avatar,
   Card,
@@ -5,15 +7,10 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
-  Autocomplete,
   TextField,
-  useAutocomplete,
   InputAdornment,
   Typography,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
-
-import { usePatient } from "../context/PatientContext";
 import { Search } from "@mui/icons-material";
 interface PatientsProps {
   patients: any[];
@@ -35,7 +32,7 @@ const PatientsList: React.FC<PatientsProps> = ({ patients }) => {
         height: `calc(100dvh - 72px - 32px)`,
         minHeight: "1000px",
         overflowY: "auto",
-        padding: 1,
+        padding: 2,
         display:"flex",
         flexDirection:"column",
         gap:2,

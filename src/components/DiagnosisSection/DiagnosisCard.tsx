@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,11 +14,11 @@ import {
   ChartData,
   ChartOptions,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+
 import "chartjs-adapter-date-fns";
-import { SetStateAction, useMemo, useState } from "react";
-import Dropdown from "../Dropdown";
+
 import { Box, SelectChangeEvent, Typography } from "@mui/material";
+import Dropdown from "../Dropdown";
 import DiagnosisAverage from "./DiagnosisAverage";
 
 ChartJS.register(
@@ -41,23 +43,17 @@ export type DiagnosisDataItem = {
   heart_rate: number;
 };
 
-type DiagnosisCardProps = {
-  // data: DiagnosisDataItem[];
-  data: any[];
-
-  filterMonths: string | number | "all";
-  setFilterMonths: (value: string | number | "all") => void;
-};
-
-
-const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
-  console.log('Data',data)
+const DiagnosisCard = ({ data, filterMonths, setFilterMonths }: any) => {
   const filteredData = useMemo(() => {
     if (filterMonths === "all") return data;
 
     // 1. Get the latest date from the data as reference
     const latestDate = new Date(
-      Math.max(...data.map((d: { date: string | number | Date; }) => new Date(d.date).getTime())),
+      Math.max(
+        ...data.map((d: { date: string | number | Date }) =>
+          new Date(d.date).getTime(),
+        ),
+      ),
     );
 
     // 2. Calculate the start date (3 or 6 months prior)
@@ -65,7 +61,7 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
     startDate.setMonth(startDate.getMonth() - Number(filterMonths));
 
     // 3. Filter data points
-    return data.filter((item:any) => new Date(item.date) >= startDate);
+    return data.filter((item: any) => new Date(item.date) >= startDate);
   }, [filterMonths, data]);
 
   const handleFilterChange = (event: SelectChangeEvent<string | number>) => {
@@ -76,25 +72,29 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
 
   const systolicAvg =
     filteredData?.length > 0
-      ? filteredData.reduce((sum: any, d: { systolic: any; }) => sum + d.systolic, 0) /
-        filteredData.length
+      ? filteredData.reduce(
+          (sum: any, d: { systolic: any }) => sum + d.systolic,
+          0,
+        ) / filteredData.length
       : 0;
 
   const systolicOverallAvg =
     data?.length > 0
-      ? data.reduce((sum: any, d: { systolic: any; }) => sum + d.systolic, 0) /
+      ? data.reduce((sum: any, d: { systolic: any }) => sum + d.systolic, 0) /
         data.length
       : 0;
 
   const diastolicAvg =
     filteredData?.length > 0
-      ? filteredData.reduce((sum: any, d: { diastolic: any; }) => sum + d.diastolic, 0) /
-        filteredData.length
+      ? filteredData.reduce(
+          (sum: any, d: { diastolic: any }) => sum + d.diastolic,
+          0,
+        ) / filteredData.length
       : 0;
 
   const diastolicOverallAvg =
     data?.length > 0
-      ? data.reduce((sum: any, d: { diastolic: any; }) => sum + d.diastolic, 0) /
+      ? data.reduce((sum: any, d: { diastolic: any }) => sum + d.diastolic, 0) /
         data.length
       : 0;
   const chartData: ChartData<"line", { x: Date; y: number }[]> = {
@@ -102,7 +102,10 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
       {
         label: "Systolic",
         // data: processedData.map((d) => ({ x: d.date, y: d.systolic })),
-        data: filteredData?.map((d: { date: any; systolic: any; }) => ({ x: d.date, y: d.systolic })),
+        data: filteredData?.map((d: { date: any; systolic: any }) => ({
+          x: d.date,
+          y: d.systolic,
+        })),
         borderColor: "#E66FD2",
         backgroundColor: "#C26EB4",
         borderWidth: 2,
@@ -111,7 +114,10 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
       {
         label: "Diastolic",
         // data: processedData.map((d) => ({ x: d.date, y: d.diastolic })),
-        data: filteredData?.map((d: { date: any; diastolic: any; }) => ({ x: d.date, y: d.diastolic })),
+        data: filteredData?.map((d: { date: any; diastolic: any }) => ({
+          x: d.date,
+          y: d.diastolic,
+        })),
         borderColor: "#8C6FE6",
         borderWidth: 2,
         backgroundColor: "#7E6CAB",
@@ -151,7 +157,7 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
         minHeight: 298,
         display: "flex",
         flexDirection: "row",
-        gap: 8
+        gap: 8,
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -193,7 +199,6 @@ const DiagnosisCard = ({data, filterMonths,setFilterMonths}:any) => {
               : "low"
           }
           average={Math.round(systolicAvg)}
-
           color={"#E66FD2"}
         />
 

@@ -1,46 +1,30 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "./components/Navbar";
-import {
-  Box,
-  Container,
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
 import { getPatients } from "./api/getPatient";
+import { usePatient } from "./context/PatientContext";
+import { Container, Grid } from "@mui/material";
+import NavBar from "./components/Navbar";
 import PatientProfileCard from "./components/PatientProfileCard";
-import DiagnosisCard from "./components/DiagnosisSection/DiagnosisCard";
 import PatientsList from "./components/PatientsList";
 import DiagnosisHistory from "./components/DiagnosisSection/DiagnosisHistory";
 import DiagnosticList from "./components/DiagnosisSection/DiagnosticList";
 import LabResults from "./components/LabResults";
-import { ReactComponent as DownloadIcon } from "./assets/download.svg";
-import { usePatient } from "./context/PatientContext";
-
 
 function App() {
-    const {selectedPatient} = usePatient()
-
-  const [patients, setPatients] = useState<any>([]);
+  const { selectedPatient, setSelectedPatient } = usePatient();
   const [allPatients, setAllPatients] = useState<any>([]);
   useEffect(() => {
     const controller = new AbortController();
     const fetchData = async () => {
       const data = await getPatients();
       setAllPatients(data);
-      setPatients(
-        data?.filter((patient: any) => patient.name === "Jessica Taylor"),
+      setSelectedPatient(
+        data?.find((patient: any) => patient.name === "Jessica Taylor"),
       );
     };
     fetchData();
     return () => controller.abort();
-  }, []);
+  }, [setSelectedPatient]);
 
-  // console.log("Data", patients);
-console.log('Selected Patient', selectedPatient)
-  // const labResults = selectedPatient?.lab_results;
 
   return (
     <Container
@@ -50,6 +34,8 @@ console.log('Selected Patient', selectedPatient)
         background: "#F6F7F8",
         flexDirection: "column",
         gap: 4,
+        padding: 2,
+        width:"100%"
       }}
     >
       <NavBar />
@@ -62,8 +48,7 @@ console.log('Selected Patient', selectedPatient)
         <Grid size="auto">
           <PatientsList patients={allPatients} />
         </Grid>
-        <Grid size="grow" container spacing={2}>
-          {/* <Box></Box> */}
+        <Grid size="grow" container spacing={1}>
           <DiagnosisHistory data={selectedPatient} />
           <DiagnosticList data={selectedPatient} />
         </Grid>

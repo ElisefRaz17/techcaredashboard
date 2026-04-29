@@ -1,6 +1,5 @@
 import {
   Card,
-  CardHeader,
   Table,
   TableBody,
   TableCell,
@@ -9,16 +8,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-interface DiagnosticItem {
-  name: string;
-  description: string;
-  status: string;
-}
-type Props = {
-  data?: Array<{
-    diagnostic_list?: DiagnosticItem[];
-  }>;
-};
+
+
 
 const DiagnosticList = ({ data }:any) => {
   const transformData = (rawData: any): any[] => {
@@ -42,7 +33,7 @@ const DiagnosticList = ({ data }:any) => {
         gap: 2,
         padding: 2,
         width: "100%",
-        maxHeight:349
+        maxHeight:320
       }}
     >
       <Typography sx={{ fontWeight: "800", fontSize: 24 }}>
