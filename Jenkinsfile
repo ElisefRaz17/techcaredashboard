@@ -9,9 +9,9 @@ pipeline {
     stage('Build and Deploy Frontend Service') {
       steps {
         dir('healthcare') {
-          sh 'npm install'
-          sh 'npm run build'
-          sh 'npx vercel --prod --token $VERCEL_TOKEN --yes'
+          bat 'npm install'
+          bat 'npm run build'
+          bat 'npx vercel --prod --token $VERCEL_TOKEN --yes'
         }
       }
     }
