@@ -11,7 +11,7 @@ pipeline {
         dir('healthcare') {
           bat 'npm install'
           bat 'npm run build'
-          bat 'npx vercel --prod --token VERCEL_TOKEN --yes'
+          bat 'npx vercel --prod --token "${VERCEL_TOKEN}" --yes'
         }
       }
     }
