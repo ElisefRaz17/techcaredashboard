@@ -51,21 +51,21 @@ pipeline {
         stage('Vercel Pull') {
             steps {
                 // Pull environment variables from Vercel securely
-                bat 'vercel pull --yes --environment=production --token=%VERCEL_TOKEN%'
+                bat 'npx vercel pull --yes --environment=production --token=%VERCEL_TOKEN%'
             }
         }
 
         stage('Vercel Build') {
             steps {
                 // Build the project using Vercel's build pipeline
-                bat 'vercel build --prod --token=%VERCEL_TOKEN%'
+                bat 'npx vercel build --prod --token=%VERCEL_TOKEN%'
             }
         }
 
         stage('Vercel Deploy') {
             steps {
                 // Deploy the pre-built project to Vercel
-                bat 'vercel deploy --prebuilt --prod --token=%VERCEL_TOKEN%'
+                bat 'npx vercel deploy --prebuilt --prod --token=%VERCEL_TOKEN%'
             }
         }
     }
