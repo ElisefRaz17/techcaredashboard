@@ -58,15 +58,16 @@ pipeline {
         stage('Vercel Build') {
             steps {
                 // Build the project using Vercel's build pipeline
-                bat 'npx vercel build --prod --token=%VERCEL_TOKEN%'
+                bat "npm run build"
+                bat 'npx vercel --prod --token=%VERCEL_TOKEN%'
             }
         }
 
-        stage('Vercel Deploy') {
-            steps {
-                // Deploy the pre-built project to Vercel
-                bat 'npx vercel deploy --prebuilt --prod --token=%VERCEL_TOKEN%'
-            }
-        }
+        // stage('Vercel Deploy') {
+        //     steps {
+        //         // Deploy the pre-built project to Vercel
+        //         bat 'npx vercel deploy --prebuilt --prod --token=%VERCEL_TOKEN%'
+        //     }
+        // }
     }
 }
