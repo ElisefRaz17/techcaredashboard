@@ -1,24 +1,74 @@
-import { Avatar, Card, List, ListItem, ListItemText, ListItemButton } from "@mui/material";
-import React from "react";
-import { Patient } from "../types/patient";
-import {usePatient} from "../context/PatientContext"
+import {
+  Avatar,
+  Card,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Autocomplete,
+  TextField,
+  useAutocomplete,
+  InputAdornment,
+  Typography,
+} from "@mui/material";
+import React, { useMemo, useState } from "react";
+
+import { usePatient } from "../context/PatientContext";
+import { Search } from "@mui/icons-material";
 interface PatientsProps {
   patients: any[];
 }
 const PatientsList: React.FC<PatientsProps> = ({ patients }) => {
-  const {selectedPatient,setSelectedPatient} = usePatient()
-console.log("Selected Patient", selectedPatient)
+  const { setSelectedPatient } = usePatient();
+  const [searchValue, setSearchValue] = useState("");
+
+  const filteredItems = useMemo(() => {
+    if (!searchValue) return patients;
+    return patients.filter((item) =>
+      item.name.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+  }, [searchValue,patients]);
   return (
-    <Card sx={{ width: 367, height: `calc(100dvh - 72px - 32px)`, minHeight: '1000px', overflowY: 'auto' }}>
+    <Card
+      sx={{
+        width: 367,
+        height: `calc(100dvh - 72px - 32px)`,
+        minHeight: "1000px",
+        overflowY: "auto",
+        padding: 1,
+        display:"flex",
+        flexDirection:"column",
+        gap:2,
+        borderRadius:"16px"
+      }}
+    >
+      <Typography sx={{ fontWeight: "800", fontSize: 24 }}>Patients</Typography>
+      <TextField
+        fullWidth
+        variant="standard" // "standard" variant naturally disables label ripple effects
+        placeholder="Search patients..."
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        sx={{ mb: 2 }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          },
+        }}
+      />
       <List>
-        {patients.map((patient) => (
+        {filteredItems.map((patient) => (
           <ListItemButton
-          onClick={()=>setSelectedPatient(patient)}
+            onClick={() => setSelectedPatient(patient)}
             key={patient.name}
             sx={{
-              '&:hover': {
-                backgroundColor: '#D8FCF7', // Theme-based or custom color like '#f0f0f0'
-              }
+              "&:hover": {
+                backgroundColor: "#D8FCF7", // Theme-based or custom color like '#f0f0f0'
+              },
             }}
           >
             <ListItem>
@@ -36,4 +86,3 @@ console.log("Selected Patient", selectedPatient)
 };
 
 export default PatientsList;
-

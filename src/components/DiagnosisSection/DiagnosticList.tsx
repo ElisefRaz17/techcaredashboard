@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   Typography,
@@ -19,17 +20,19 @@ type Props = {
   }>;
 };
 
-const DiagnosticList = ({ data = [] }: Props) => {
-  const transformData = (rawData: Props["data"]): DiagnosticItem[] => {
+const DiagnosticList = ({ data }:any) => {
+  const transformData = (rawData: any): any[] => {
     return (rawData ?? [])
-      .flatMap((patient) => patient.diagnostic_list ?? [])
-      .map((item) => ({
+      .diagnosis_history
+      ?.map((item:any) => ({
         name: item.name,
         description: item.description,
         status: item.status,
       }));
   };
   const processedData = transformData(data);
+  console.log('Processed Diagnostic',processedData)
+  console.log('Unprocessed Diagnostic',data)
   return (
     <Card
       sx={{
@@ -39,13 +42,15 @@ const DiagnosticList = ({ data = [] }: Props) => {
         gap: 2,
         padding: 2,
         width: "100%",
+        maxHeight:349
       }}
     >
       <Typography sx={{ fontWeight: "800", fontSize: 24 }}>
         Diagnostic List
       </Typography>
-      <Table sx={{ "& .MuiTableCell-root": { borderBottom: "none" } }}>
-        <TableHead>
+      <TableContainer >
+      <Table sx={{ "& .MuiTableCell-root": { borderBottom: "none", display:"block", width:"100%" } }}>
+        <TableHead sx={{ display: 'block', width: '100%' }}>
           <TableRow
             sx={{
               background: "#F6F7F8",
@@ -57,23 +62,30 @@ const DiagnosticList = ({ data = [] }: Props) => {
                 borderTopRightRadius: "24px",
                 borderBottomRightRadius: "24px",
               },
+              display:"flex",
+              width:"100%"
             }}
           >
-            <TableCell sx={{ fontWeight:"bold"}}>Problem/Diagnosis</TableCell>
-            <TableCell sx={{fontWeight:"bold"}}>Description</TableCell>
-            <TableCell sx={{fontWeight:"bold"}}>Status</TableCell>
+            <TableCell sx={{ fontWeight:"bold", flex:1}}>Problem/Diagnosis</TableCell>
+            <TableCell sx={{fontWeight:"bold", flex:1}}>Description</TableCell>
+            <TableCell sx={{fontWeight:"bold", flex:1}}>Status</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {processedData.map((row) => (
-            <TableRow key={row.name}>
-              <TableCell scope="row">{row.name}</TableCell>
-              <TableCell>{row.description}</TableCell>
-              <TableCell>{row.status}</TableCell>
+        <TableBody           sx={{
+            display: 'block',
+            maxHeight: '178px', // Set your desired scroll height
+            overflowY: 'auto'
+          }}>
+          {data?.diagnostic_list?.map((row:any) => (
+            <TableRow key={row.name} sx={{ display:"flex", width:"100%"}}>
+              <TableCell  sx={{flex:1}}>{row.name}</TableCell>
+              <TableCell sx={{flex:1}}>{row.description}</TableCell>
+              <TableCell sx={{flex:1}}>{row.status}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      </TableContainer>
     </Card>
   );
 };

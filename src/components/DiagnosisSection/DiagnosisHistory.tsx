@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { Box, Card } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import DiagnosisCard from "./DiagnosisCard";
 import StatCard from "./StatCard";
 import TemperatureIcon from "../../assets/temperature.svg";
 import RespiratoryIcon from "../../assets/respiratory rate.svg";
-import HeartIcon from "../../assets/HeartBPM.svg"
+import HeartIcon from "../../assets/HeartBPM.svg";
 
 interface BloodPressureData {
   date: Date;
@@ -37,18 +37,23 @@ type DiagnosisHistoryItem = {
   };
 };
 
-type Props = {
-  data?: Array<{
-    diagnosis_history?: DiagnosisHistoryItem[];
-  }>;
-};
-const DiagnosisHistory = ({ data = [] }: Props) => {
-  const [filterMonths, setFilterMonths] = useState<string | number | "all">("all");
+// type Props = {
+//   diagnosis_history?:DiagnosisHistoryItem[];
+//   // data?: Array<{
+//   //   diagnosis_history?: DiagnosisHistoryItem[];
+//   // }>;
+// };
+const DiagnosisHistory = ({ data }: any) => {
+  console.log("Diagnosis Data", data);
+  const [filterMonths, setFilterMonths] = useState<string | number | "all">(
+    "all",
+  );
 
-  const transformData = (rawData: Props["data"]): BloodPressureData[] => {
-    return (rawData ?? [])
-      .flatMap((patient) => patient.diagnosis_history ?? [])
-      .map((item) => ({
+  const transformData = (rawData: any): BloodPressureData[] => {
+    // const transformData = (rawData:any): any[] => {
+
+    return (rawData ?? []).diagnosis_history
+      ?.map((item: any) => ({
         date: new Date(`${item.month} 1, ${item.year}`),
         label: `${item.month} ${item.year}`,
         respiratory_rate: item.respiratory_rate.value,
@@ -57,15 +62,16 @@ const DiagnosisHistory = ({ data = [] }: Props) => {
         systolic: item.blood_pressure.systolic.value,
         diastolic: item.blood_pressure.diastolic.value,
       }))
-      .sort((a, b) => a.date.getTime() - b.date.getTime());
+      .sort((a: any, b: any) => a.date.getTime() - b.date.getTime());
   };
   const processedData = transformData(data);
+
   const filteredData = useMemo(() => {
     if (filterMonths === "all") return processedData;
 
     // 1. Get the latest date from the data as reference
     const latestDate = new Date(
-      Math.max(...processedData.map((d) => new Date(d.date).getTime())),
+      Math.max(...processedData.map((d: any) => new Date(d.date).getTime())),
     );
 
     // 2. Calculate the start date (3 or 6 months prior)
@@ -73,35 +79,38 @@ const DiagnosisHistory = ({ data = [] }: Props) => {
     startDate.setMonth(startDate.getMonth() - Number(filterMonths));
 
     // 3. Filter data points
-    return processedData.filter((item) => new Date(item.date) >= startDate);
+    return processedData.filter(
+      (item: any) => new Date(item.date) >= startDate,
+    );
   }, [filterMonths, processedData]);
+  // console.log('Filtered Data', filteredData)
   const avgRespiratory =
-    filteredData.length > 0
+    filteredData?.length > 0
       ? filteredData.reduce((sum, d) => sum + (d?.respiratory_rate ?? 0), 0) /
         filteredData.length
       : 0;
   const overallTempAvg =
-    processedData.length > 0
+    processedData?.length > 0
       ? processedData.reduce((sum, d) => sum + (d?.temperature ?? 0), 0) /
         processedData.length
       : 0;
   const overallHeartAvg =
-    processedData.length > 0
+    processedData?.length > 0
       ? processedData.reduce((sum, d) => sum + (d?.heart_rate ?? 0), 0) /
         processedData.length
       : 0;
   const overallRespAvg =
-    processedData.length > 0
+    processedData?.length > 0
       ? processedData.reduce((sum, d) => sum + (d?.respiratory_rate ?? 0), 0) /
         processedData.length
       : 0;
   const avgTemperature =
-    filteredData.length > 0
+    filteredData?.length > 0
       ? filteredData.reduce((sum, d) => sum + (d?.temperature ?? 0), 0) /
         filteredData.length
       : 0;
   const avgHeartRate =
-    filteredData.length > 0
+    filteredData?.length > 0
       ? filteredData.reduce((sum, d) => sum + (d?.heart_rate ?? 0), 0) /
         filteredData.length
       : 0;
@@ -144,14 +153,23 @@ const DiagnosisHistory = ({ data = [] }: Props) => {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        padding: 2
+        padding: 2,
       }}
     >
-      <DiagnosisCard data={processedData} filterMonths={filterMonths} setFilterMonths={setFilterMonths} />
+      <Typography sx={{ fontWeight: "800", fontSize: 24 }}>
+        Diagnosis History
+      </Typography>
+      <DiagnosisCard
+        data={processedData}
+        filterMonths={filterMonths}
+        setFilterMonths={setFilterMonths}
+      />
       <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
         <StatCard
           label={"Respiratory Rate"}
           imagePath={RespiratoryIcon}
+          // averageLabel={""}
+          // average={0}
           averageLabel={respiratoryRateLabel}
           average={Math.round(avgRespiratory)}
           averageType={"normal"}
@@ -163,6 +181,8 @@ const DiagnosisHistory = ({ data = [] }: Props) => {
           imagePath={TemperatureIcon}
           averageLabel={temperatureRateLabel}
           average={Math.ceil(avgTemperature)}
+          //           averageLabel={""}
+          // average={0}
           averageType={"normal"}
           measurementType={"temperature"}
           backgroundColor={"#FFE6E9"}
@@ -170,8 +190,10 @@ const DiagnosisHistory = ({ data = [] }: Props) => {
         <StatCard
           label={"Heart Rate"}
           imagePath={HeartIcon}
+          // averageLabel=""
           averageLabel={heartRateLabel}
           average={Math.round(avgHeartRate)}
+          // average={0}
           averageType={"normal"}
           measurementType="heart"
           backgroundColor={"#FFE6F1"}

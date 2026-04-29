@@ -19,7 +19,7 @@ const LabResults = ({labResults}:any) => {
         Lab Results
       </Typography>
       <List component={Stack} direction="column" spacing={1} sx={{minHeight:207,overflowY:"auto", width:"100%"}}>
-      {labResults[0]?.map((item:any, index:number)=>(
+      {labResults?.map((item:any, index:number)=>(
         <ListItem key={item || index} secondaryAction={<DownloadIcon/>}>
             <ListItemText primary={item}/>
         </ListItem>

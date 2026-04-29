@@ -17,9 +17,11 @@ import DiagnosisHistory from "./components/DiagnosisSection/DiagnosisHistory";
 import DiagnosticList from "./components/DiagnosisSection/DiagnosticList";
 import LabResults from "./components/LabResults";
 import { ReactComponent as DownloadIcon } from "./assets/download.svg";
+import { usePatient } from "./context/PatientContext";
 
 
 function App() {
+    const {selectedPatient} = usePatient()
 
   const [patients, setPatients] = useState<any>([]);
   const [allPatients, setAllPatients] = useState<any>([]);
@@ -36,9 +38,9 @@ function App() {
     return () => controller.abort();
   }, []);
 
-  console.log("Data", patients);
-
-  const labResults = patients.map((patient: any) => patient.lab_results);
+  // console.log("Data", patients);
+console.log('Selected Patient', selectedPatient)
+  // const labResults = selectedPatient?.lab_results;
 
   return (
     <Container
@@ -62,8 +64,8 @@ function App() {
         </Grid>
         <Grid size="grow" container spacing={2}>
           {/* <Box></Box> */}
-          <DiagnosisHistory data={patients} />
-          <DiagnosticList data={patients} />
+          <DiagnosisHistory data={selectedPatient} />
+          <DiagnosticList data={selectedPatient} />
         </Grid>
         <Grid
           size="auto"
@@ -71,8 +73,8 @@ function App() {
           container
           spacing={2}
         >
-          <PatientProfileCard profile={patients} />
-          <LabResults labResults={labResults} />
+          <PatientProfileCard profile={selectedPatient} />
+          <LabResults labResults={selectedPatient?.lab_results} />
         </Grid>
       </Grid>
     </Container>
