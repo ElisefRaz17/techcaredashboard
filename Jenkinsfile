@@ -31,7 +31,6 @@ pipeline {
     environment {
         // Map Jenkins credentials to usable environment variables
         VERCEL_TOKEN = credentials('VERCEL_TOKEN')
-        VERCEL_PROJECT_ID = credentials('VERCEL_PROJECT_ID')
     }
 
     stages {
